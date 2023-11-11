@@ -5,9 +5,9 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / 'README.md').read_text()
   
 setup(
-    name = 'vector',
-    version = '1.1.1',
-    description = 'An infinite dimensional vector module.',
+    name = 'tensor',
+    version = '0.9',
+    description = 'An infinite dimensional tensor module.',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     
@@ -15,9 +15,10 @@ setup(
     author_email = 'goessl@student.tugraz.at',
     license = 'MIT',
     
-    py_modules = ['vector'],
-    url = 'https://github.com/goessl/vector',
-    python_requires = '>=3.5',
+    py_modules = ['tensor'],
+    url = 'https://github.com/goessl/tensor',
+    python_requires = '>=3',
+    install_requires = ['numpy'],
     
     classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -27,6 +28,11 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.0',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
