@@ -6,7 +6,7 @@ long_description = (this_directory / 'README.md').read_text()
   
 setup(
     name = 'tensor',
-    version = '0.9',
+    version = '0.9.1',
     description = 'An infinite dimensional tensor module.',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
