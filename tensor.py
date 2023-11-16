@@ -9,14 +9,16 @@ class Tensor:
     #construction stuff
     def __init__(self, coef):
         """Creates a new tensor with the given coefficients."""
-        #cant differentiate between a tuple as a rank one tensor
+        #can't differentiate between a tuple as a rank one tensor
         #or a tuple as a "basis tensor" request
+        #therefore moved basis_tensor to own factory
         self.coef = np.asarray(coef, dtype=object)
         self.coef.flags.writeable = False
     
     @staticmethod
     def basis_tensor(*i):
-        #see Tensor.random
+        #careful, needs astype(int).astype(object)
+        #but the latter happens in the constructor
         t = np.zeros(np.add(i, 1), dtype=int)
         t[i] = 1
         return Tensor(t)
@@ -25,8 +27,7 @@ class Tensor:
     def random(*n):
         """Creates a tensor of the given dimensionality
         with normal distributed coefficients."""
-        #careful, needs astype(float).astype(object)
-        #but the latter happens in the constructor
+        #see basis_tensor
         return Tensor(np.random.normal(size=n).astype(float))
     
     
@@ -42,7 +43,7 @@ class Tensor:
         return self.coef
     
     def __eq__(self, other):
-        return np.all(self.coef == other.coef)
+        return np.array_equal(self, other)
     
     def __lshift__(self, other):
         return type(self)(self[tuple(slice(o, None) for o in other)])
@@ -59,8 +60,6 @@ class Tensor:
         return arr
     
     def __rshift__(self, other):
-        #return type(self)(np.pad(s.coef, tuple((o, 0) for o in other)))
-        #see Tensor._pad
         return type(self)(Tensor._pad(self.coef, tuple((o, 0) for o in other)))
     
     def trim(self):
@@ -75,8 +74,8 @@ class Tensor:
     def round(self, ndigits=None):
         """Rounds all coefficients to the given precision."""
         #numpy.round doesn't accept object arrays
-        f = np.vectorize(lambda x: round(x, ndigits))
-        return type(self)(f(self.coef)).trim()
+        #because we have to vectorize either way, take the built in
+        return type(self)(np.vectorize(lambda x: round(x, ndigits))(self.coef)).trim()
     
     
     
@@ -114,8 +113,8 @@ class Tensor:
         otherwise elementwise in the first argument."""
         try:
             shape = np.maximum(s.coef.shape, t.coef.shape)
-            r = f(Tensor._pad(s.coef, tuple((0, s-l) for s, l in zip(shape, s.coef.shape))),
-                  Tensor._pad(t.coef, tuple((0, s-l) for s, l in zip(shape, t.coef.shape))))
+            r = f(Tensor._pad(s.coef, ((0, s-l) for s, l in zip(shape, s.coef.shape))),
+                  Tensor._pad(t.coef, ((0, s-l) for s, l in zip(shape, t.coef.shape))))
         except AttributeError:
             r = f(s.coef, t)
         return type(s)(r)
